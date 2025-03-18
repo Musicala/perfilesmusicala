@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Perfil - Equipo Musicala 2025</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        h1 {
+            color: #0056b3;
+            font-size: 30px;
+            font-weight: bold;
+        }
+        .logo {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            max-width: 100px;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #0056b3;
+            color: white;
+            font-weight: bold;
+        }
+        tr {
+            background-color: #ffffff;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        td {
+            font-size: 14px;
+        }
+        a {
+            text-decoration: none;
+            color: #0056b3;
+            font-weight: bold;
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 5px;
+            background-color: #e0e0e0;
+        }
+        a:hover {
+            background-color: #d0d0d0;
+        }
+        .filters {
+            margin: 15px 0;
+        }
+        .filters button {
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            margin: 5px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .filters button:hover {
+            background-color: #003d82;
+        }
+        .filters button.active {
+            background-color: #ff6600;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Logo en la esquina superior izquierda -->
+    <img src="https://static.wixstatic.com/media/85afce_3adb3865c88a492b93a8bf2dc69049c3~mv2.png" alt="Logo Musicala" class="logo">
+
+    <div class="container">
+        <h1>Perfil - Equipo Musicala 2025</h1>
+        <p>Consulta y accede a los documentos fácilmente.</p>
+
+        <!-- Filtros de Categoría -->
+        <div class="filters">
+            <button class="filter-btn active" data-category="Todos">Todos</button>
+            <button class="filter-btn" data-category="Artes plásticas">Artes Plásticas</button>
+            <button class="filter-btn" data-category="Danzas">Danzas</button>
+            <button class="filter-btn" data-category="Teatro">Teatro</button>
+            <button class="filter-btn" data-category="Administrativo">Administrativo</button>
+        </div>
+
+        <table id="documentosTable">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Documento de identidad</th>
+                    <th>Cargo</th>
+                    <th>Fecha de nacimiento</th>
+                    <th>Edad</th>
+                    <th>Hoja de vida</th>
+                    <th>Área 1</th>
+                    <th>Área 2</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <p class="copyright">© 2025 Musicala. Todos los derechos de uso son propiedad de Musicala.</p>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRhDRx0WGnkaQwENbF-abYvJgC1U7q-Q6Oik5a4Lrkw51Y5QFh0hutrOnTLPL1sRRXsay5VGtQXTlwj/pub?gid=0&single=true&output=csv";
+    
+            fetch(sheetURL)
+                .then(response => response.text())
+                .then(csvText => {
+                    let rows = csvText.split("\n").map(row => row.split(","));
+                    let tbody = $("#documentosTable tbody");
+    
+                    rows.slice(1).forEach(row => {
+                        if (row.length < 8) return; // Asegurar que la fila tiene suficientes columnas
+    
+                        let nombre = row[0].trim();
+                        let documento_de_identidad = row[1].trim();
+                        let cargo = row[2].trim();
+                        let fecha_de_nacimiento = row[3].trim();
+                        let edad = row[4].trim();
+                        let hoja_de_vida = row[5].trim();
+                        let area_1 = row[6].trim();
+                        let area_2 = row[7].trim();
+                        let categoria = row[8] ? row[8].trim() : "General"; // Manejar caso en que la columna esté vacía
+    
+                        let enlaceHTML = hoja_de_vida ? `<a href="${hoja_de_vida}" target="_blank">📄 Ver Documento</a>` : "No disponible";
+    
+                        let rowHTML = `<tr data-category="${categoria}">
+                            <td>${nombre}</td>
+                            <td>${documento_de_identidad}</td>
+                            <td>${cargo}</td>
+                            <td>${fecha_de_nacimiento}</td>
+                            <td>${edad}</td>
+                            <td>${enlaceHTML}</td>
+                            <td>${area_1}</td>
+                            <td>${area_2}</td>
+                        </tr>`;
+    
+                        tbody.append(rowHTML);
+                    });
+    
+                    // Manejador de filtros
+                    $(".filter-btn").click(function() {
+                        $(".filter-btn").removeClass("active");
+                        $(this).addClass("active");
+    
+                        let selectedCategory = $(this).data("category");
+    
+                        $("#documentosTable tbody tr").each(function() {
+                            let rowCategory = $(this).attr("data-category");
+                            if (selectedCategory === "Todos" || rowCategory === selectedCategory || rowCategory === "General") {
+                                $(this).show();
+                            } else {
+                                $(this).hide();
+                            }
+                        });
+                    });
+                })
+                .catch(error => {
+                    console.error("Error al cargar los datos:", error);
+                });
+        });
+    </script>
+   
+</body>
+</html>
