@@ -122,8 +122,6 @@
                     <th>Fecha de nacimiento</th>
                     <th>Edad</th>
                     <th>Hoja de vida</th>
-                    <th>Área 1</th>
-                    <th>Área 2</th>
                 </tr>
             </thead>
             <tbody></tbody>
@@ -151,8 +149,6 @@
                         let fecha_de_nacimiento = row[3].trim();
                         let edad = row[4].trim();
                         let hoja_de_vida = row[5].trim();
-                        let area_1 = row[6].trim();
-                        let area_2 = row[7].trim();
                         let categoria = row[8] ? row[8].trim() : "General"; // Manejar caso en que la columna esté vacía
     
                         let enlaceHTML = hoja_de_vida ? `<a href="${hoja_de_vida}" target="_blank">📄 Ver Documento</a>` : "No disponible";
@@ -164,8 +160,6 @@
                             <td>${fecha_de_nacimiento}</td>
                             <td>${edad}</td>
                             <td>${enlaceHTML}</td>
-                            <td>${area_1}</td>
-                            <td>${area_2}</td>
                         </tr>`;
     
                         tbody.append(rowHTML);
