@@ -110,9 +110,9 @@
             <button class="filter-btn" data-category="Artes plásticas">Artes Plásticas</button>
             <button class="filter-btn" data-category="Danzas">Danzas</button>
             <button class="filter-btn" data-category="Teatro">Teatro</button>
+            <button class="filter-btn" data-category="Porras">Porras</button>
             <button class="filter-btn" data-category="Administrativo">Administrativo</button>
         </div>
-
         <table id="documentosTable">
             <thead>
                 <tr>
@@ -133,59 +133,60 @@
     <script>
         $(document).ready(function() {
             const sheetURL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRhDRx0WGnkaQwENbF-abYvJgC1U7q-Q6Oik5a4Lrkw51Y5QFh0hutrOnTLPL1sRRXsay5VGtQXTlwj/pub?gid=0&single=true&output=csv";
+
+        fetch(sheetURL)
+            .then(response => response.text())
+            .then(csvText => {
+                let rows = csvText.split("\n").map(row => row.split(","));
+                let tbody = $("#documentosTable tbody");
+
+                rows.slice(1).forEach(row => {
+                    if (row.length < 6) return; // Verificar que la fila tenga suficientes columnas
     
-            fetch(sheetURL)
-                .then(response => response.text())
-                .then(csvText => {
-                    let rows = csvText.split("\n").map(row => row.split(","));
-                    let tbody = $("#documentosTable tbody");
+                    let nombre = row[0].trim();
+                    let documento_de_identidad = row[1].trim();
+                    let cargo = row[2].trim();
+                    let fecha_de_nacimiento = row[3].trim();
+                    let edad = row[4].trim();
+                    let hoja_de_vida = row[5].trim();
+                    let categoria = row[6] ? row[6].trim() : "General"; // Ajusta esto según la columna correcta
     
-                    rows.slice(1).forEach(row => {
-                        if (row.length < 8) return; // Asegurar que la fila tiene suficientes columnas
+                    let enlaceHTML = hoja_de_vida ? `<a href="${hoja_de_vida}" target="_blank">📄 Ver Documento</a>` : "No disponible";
     
-                        let nombre = row[0].trim();
-                        let documento_de_identidad = row[1].trim();
-                        let cargo = row[2].trim();
-                        let fecha_de_nacimiento = row[3].trim();
-                        let edad = row[4].trim();
-                        let hoja_de_vida = row[5].trim();
-                        let categoria = row[8] ? row[8].trim() : "General"; // Manejar caso en que la columna esté vacía
-    
-                        let enlaceHTML = hoja_de_vida ? `<a href="${hoja_de_vida}" target="_blank">📄 Ver Documento</a>` : "No disponible";
-    
-                        let rowHTML = `<tr data-category="${categoria}">
-                            <td>${nombre}</td>
-                            <td>${documento_de_identidad}</td>
-                            <td>${cargo}</td>
-                            <td>${fecha_de_nacimiento}</td>
-                            <td>${edad}</td>
-                            <td>${enlaceHTML}</td>
-                        </tr>`;
-    
-                        tbody.append(rowHTML);
-                    });
-    
-                    // Manejador de filtros
-                    $(".filter-btn").click(function() {
-                        $(".filter-btn").removeClass("active");
-                        $(this).addClass("active");
-    
-                        let selectedCategory = $(this).data("category");
-    
-                        $("#documentosTable tbody tr").each(function() {
-                            let rowCategory = $(this).attr("data-category");
-                            if (selectedCategory === "Todos" || rowCategory === selectedCategory || rowCategory === "General") {
-                                $(this).show();
-                            } else {
-                                $(this).hide();
-                            }
-                        });
-                    });
-                })
-                .catch(error => {
-                    console.error("Error al cargar los datos:", error);
+                    let rowHTML = `<tr data-category="${categoria}">
+                        <td>${nombre}</td>
+                        <td>${documento_de_identidad}</td>
+                        <td>${cargo}</td>
+                        <td>${fecha_de_nacimiento}</td>
+                        <td>${edad}</td>
+                        <td>${enlaceHTML}</td>
+                    </tr>`;
+
+                    tbody.append(rowHTML);
                 });
+
+                // Manejador de filtros
+                $(".filter-btn").click(function() {
+                    $(".filter-btn").removeClass("active");
+                    $(this).addClass("active");
+    
+                    let selectedCategory = $(this).data("category");
+    
+                    $("#documentosTable tbody tr").each(function() {
+                        let rowCategory = $(this).attr("data-category");
+                        if (selectedCategory === "Todos" || rowCategory === selectedCategory) {
+                            $(this).show();
+                        } else {
+                            $(this).hide();
+                        }
+                    });
+                });
+            })
+            .catch(error => {
+                console.error("Error al cargar los datos:", error);
         });
+});
+
     </script>
    
 </body>
